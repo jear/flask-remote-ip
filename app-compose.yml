@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  flask-ip:
+    image: rbekker87/flask-remote-ip:alpine
+    networks:
+      - appnet
+    deploy:
+      labels:
+        - "traefik.port=80"
+        - "traefik.docker.network=appnet"
+        - "traefik.frontend.rule=Host:ip.domain.com; PathPrefix: /"
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - 'node.role==worker'
+      resources:
+        limits:
+          cpus: '0.01'
+          memory: 32M
+        reservations:
+          cpus: '0.001'
+          memory: 16M
+
+networks:
+  appnet:
+    external: true
